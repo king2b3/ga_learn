@@ -25,16 +25,16 @@ The data set used in this work can be found at https://www.kaggle.com/ronitf/hea
   - Plan to allow both, if data set is small enough, the second option is fine. Training of NN will be bottleneck
 
 ## Steps
-- Learn tensorflow API.
-- Run simple NN using data set.
+- Learn tensorflow API. DONE.
+- Run simple NN using data set. DONE
 - Visualize NN from tensorflow in P5 JS.
 - Build GA, and plot GA stats.
 - Publish beta for hack-a-thon.
 
 ## Completed Before Hand
-- Repo created
+- Repo created. DONE.
 - Issues defined in GitHub
-- Libraries installed
+- Libraries installed DONE.
 - JS wed server prepared
   - In Python on a local network, viewable in browser
 - Data set selected
