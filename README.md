@@ -10,6 +10,9 @@ Rev UC 2022 Hack-a-thon. Visualizing GA to optimize the use of NN to classify.
   - Dissertation uses EC, but I haven't explore visualization past simple text description
 - Visualize learning through a NN
 
+## Data Set
+The data set used in this work can be found at https://www.kaggle.com/ronitf/heart-disease-uci
+
 ## Major decisions
 - Data set?
   - Check kaggle for simple data set.
