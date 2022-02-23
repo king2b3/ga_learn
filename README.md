@@ -14,15 +14,23 @@ Rev UC 2022 Hack-a-thon. Visualizing GA to optimize the use of NN to classify.
 The data set used in this work can be found at https://www.kaggle.com/ronitf/heart-disease-uci
 
 ## Major decisions
-- Data set?
-  - Check kaggle for simple data set.
-  - Bottle neck of training is huge.
 - GPU to train networks? 
   - Possibly train in python, output results, then visualize with P5 JS.
   - WHAT is needed for GPU training, and what can be an output?
 - Use GA for learning, or use GA to refine connections and size of network?
   - Will define set up of GA
   - Plan to allow both, if data set is small enough, the second option is fine. Training of NN will be bottleneck
+- ES for parameter tuning
+  - Define representation
+    - LR
+      - Gaussian mutation
+      - Floating point crossover
+    - Layers as dict?
+      - Activation type
+      - Size
+    - Epochs
+    - Loss type
+
 
 ## Steps
 - Learn tensorflow API. DONE.
