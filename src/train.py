@@ -22,7 +22,7 @@ model = tf.keras.Sequential([
 
 model.compile(
     loss=tf.keras.losses.binary_crossentropy,
-    optimizer=tf.keras.optimizers.Adam(lr=0.03),
+    optimizer=tf.keras.optimizers.Adam(lr=0.1),
     metrics=[
         tf.keras.metrics.BinaryAccuracy(name='accuracy'),
         tf.keras.metrics.Precision(name='precision'),
