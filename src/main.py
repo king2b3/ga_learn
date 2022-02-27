@@ -7,7 +7,9 @@ Descrition: Program controller
 import argparse
 import numpy as np
 import pickle as pkl
-import src.train as train
+#import src.train as train
+import es as es
+import individual as individual
 ##############################################################################
 
 ################################# Constants ##################################
@@ -27,11 +29,17 @@ def parse_arguments(args=None) -> list:
     return args
 
 def main():
-    a = np.load("data-set/x_train.npy")
-    b = np.load("data-set/y_train.npy")
-    c = np.load("data-set/x_test.npy")
-    d = np.load("data-set/y_test.npy")
-    train.train(a, b, c, d)
+
+    train = {
+        "x": np.load("data-set/x_train.npy"),
+        "y": np.load("data-set/y_train.npy")
+    }
+    test = {
+        "x" : np.load("data-set/x_test.npy"), 
+        "y" : np.load("data-set/y_test.npy")
+    }
+    algorithm = es.ES(train, test)
+    algorithm.run()
 
 
 if __name__ == "__main__":

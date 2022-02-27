@@ -4,6 +4,7 @@ Date: 2-26-2022
 Descrition: Evolutionary Strategy framework
 """
 ################################## Imports ###################################
+from numpy import average
 import individual as indv
 from copy import deepcopy
 import random
@@ -12,16 +13,19 @@ import random
 ##############################################################################
 
 class ES():
-	def __init__(self, u=10, l=70) -> None:
+	def __init__(self, test, train, u=10, l=70) -> None:
 		#recommended 1/7 ratio for mew to lambda
 		self.pop_size = u
 		self.off_size = l
 		self.pop = []
 		self.offspring = []
+		self.test = test
+		self.train = train
+		self.pop_gen()
 
 	def pop_gen(self) -> None:
 		for _ in range(self.pop_size):
-			self.pop.append(indv.Network())
+			self.pop.append(indv.Network(self.train, self.test))
 
 	def selection(self) -> None:
 		"""(u+l) selection type
@@ -36,29 +40,34 @@ class ES():
 				self.offspring.append(i.mutate())
 				self.offspring.append(i.crossover(random.choice(self.pop)))
 		#calculate fitness of the offspring
-		[x.calc_fitness for x in self.offspring]
+		for x in self.offspring:
+			try:
+				x.calc_fitness()
+			except:
+				x.fitness = 0
 		self.offspring.sort(key=lambda x: x.fitness, reverse=True)
+		self.pop = self.offspring[:self.pop_size]
 
 	def sort_pop(self) -> None:
-		self.pop_sort.sort(key=lambda x: x.fitness, reverse=True)
+		self.pop.sort(key=lambda x: x.fitness, reverse=True)
 
 	def stats(self, g) -> dict:
 		"""Returns dictionary with stats of the population"""
 		self.sort_pop()
 		print(f"Generation: {g}")
 		print(f"Best performing: {self.pop[0].fitness}")
-		print(f"Average individual: {sum(x.fitness for x in self.pop)}")
+		print(f"Average individual: {sum(x.fitness for x in self.pop)/self.pop_size}")
 
 	def exit_cond(self) -> bool:
 		"""Checks to see if Accuracy, Recall, and Percision are all 1"""
 		#population already sorted from stats function call
-		if self.pop[0].fit == 1:
+		if self.pop[0].fitness == 1:
 			return True
 		return False
 
 	def run(self, gens=100) -> None:
 		for g in range(gens):
 			self.selection()
-			print(self.stats(g))
+			self.stats(g)
 			if self.exit_cond():
 				break
