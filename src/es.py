@@ -32,6 +32,7 @@ class ES():
 		All 10 parents, 30 mutated, and 30 with crossover join the 
 		  offspring pool.
 		Deterministic elite replacement creates the new parent pool"""
+		#why break here?
 		self.offspring = deepcopy(self.pop)
 		#mutations
 		for i in self.pop:
