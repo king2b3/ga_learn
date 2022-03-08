@@ -13,7 +13,7 @@ import random
 ##############################################################################
 
 class ES():
-	def __init__(self, test, train, u=10, l=70) -> None:
+	def __init__(self, test, train, u=10, l=50) -> None:
 		#recommended 1/7 ratio for mew to lambda
 		self.pop_size = u
 		self.off_size = l
@@ -32,8 +32,7 @@ class ES():
 		All 10 parents, 30 mutated, and 30 with crossover join the 
 		  offspring pool.
 		Deterministic elite replacement creates the new parent pool"""
-		#why break here?
-		self.offspring = deepcopy(self.pop)
+		self.offspring = self.pop.copy()
 		#mutations
 		for i in self.pop:
 			ran = round((self.off_size - self.pop_size) / (2*self.pop_size))
@@ -55,9 +54,10 @@ class ES():
 	def stats(self, g) -> dict:
 		"""Returns dictionary with stats of the population"""
 		self.sort_pop()
-		print(f"Generation: {g}")
-		print(f"Best performing: {self.pop[0].fitness}")
-		print(f"Average individual: {sum(x.fitness for x in self.pop)/self.pop_size}")
+		temp = f"Generation: {g} "
+		temp += f"Best performing: {self.pop[0].fitness} "
+		temp += f"Average individual: {sum(x.fitness for x in self.pop)/self.pop_size}"
+		print(temp)
 
 	def exit_cond(self) -> bool:
 		"""Checks to see if Accuracy, Recall, and Percision are all 1"""
