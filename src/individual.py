@@ -15,7 +15,7 @@ from copy import deepcopy
 ################################# Constants ##################################
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'	#mute annoying message at the beginning of the TS model
 tf.random.set_seed(42)
-EPOCHS = 50
+EPOCHS = 25
 ACTIVATIONS = [
 	#"elu",
 	#"exponential",
