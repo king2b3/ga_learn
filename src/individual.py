@@ -184,6 +184,45 @@ class Network():
 			if gene == "num_layers":
 				self.repr[gene] = round(self.repr[gene])
 
+	def stats(self) -> None:
+		"""Dump stats to a json file"""
+		import json
+		weights_list = self.model.get_weights()
+		#print(f"number of layers {self.repr['num_layers']}")
+		temp = True
+		weights = []
+		biases = []
+		for l in range(len(weights_list)):
+			if temp:
+				#weights
+				weights.append(list(weights_list[l]))
+				temp = False
+			else:
+				#bias
+				biases.append(list(weights_list[l]))
+				temp = True
+
+		print(biases)
+		biases = json.dumps(biases)
+		print(biases)
+		#print(len(weights))
+		import itertools
+		b = list(itertools.chain.from_iterable(biases))
+		w = list(itertools.chain.from_iterable(weights))
+		weight_vals = list(itertools.chain.from_iterable(w))
+		weight_vals = {
+			"name": "weights",
+			"max": max(w),
+			"min": min(w)
+		}
+		biases_vals = {
+			"names": "biases",
+			"max": max(b),
+			"min": min(b)
+		}
+		print(weight_vals, biases_vals)
+
+		
 def main():
 	train = {
         "x": np.load("data-set/x_train.npy"),
@@ -193,13 +232,10 @@ def main():
         "x" : np.load("data-set/x_test.npy"), 
         "y" : np.load("data-set/y_test.npy")
     }
-	for _ in range(70):
-		algorithm = Network(train, test)
-		try:
-			algorithm.calc_fitness()
-		except:
-			for l in range(algorithm.repr["num_layers"]):
-				print(algorithm.repr["layers"][l])
-		print(algorithm.fitness)
 
-#main()
+	algorithm = Network(train, test)
+	algorithm.calc_fitness()
+	algorithm.stats()
+
+if __name__ == "__main__":
+	main()
