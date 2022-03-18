@@ -4,6 +4,9 @@ Date: 2-26-2022
 Descrition: Individual for ES
 """
 ################################## Imports ###################################
+from dataclasses import dataclass, asdict
+import itertools
+import json
 import os
 import tensorflow as tf
 import numpy as np
@@ -40,6 +43,12 @@ LOSS = [
 ]
 MAX_NEURONS=25
 tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
+
+@dataclass
+class Layer:
+    size: int
+    activation: str
+
 ##############################################################################
 class Network():
 	def __init__(self, train:dict, test:dict) -> None:
@@ -57,22 +66,22 @@ class Network():
 			"loss": random.choice(LOSS)
 		}
 		for _ in range(self.repr["num_layers"]):
-			self.repr["layers"].append([
+			self.repr["layers"].append(Layer(
 				random.randint(1, MAX_NEURONS),
 				random.choice(ACTIVATIONS)
-			])
+			))
 
 		#FIX THE BEGINNING AND ENDING LAYER SIZE
-		self.repr["layers"][0][0] = 13
-		self.repr["layers"][-1][0] = 1
-		self.repr["layers"][-1][1] = "sigmoid"
-		self.fitness = 0
+		self.repr["layers"][0].size = 13
+		self.repr["layers"][-1].size = 1
+		self.repr["layers"][-1].activation = "sigmoid"
+		self.fitness = 0.0
 
 	def build_model(self) -> None:
 		temp = []
 		for l in self.repr["layers"]:
 			#print(l)
-			temp.append(tf.keras.layers.Dense(l[0], activation=l[1]))
+			temp.append(tf.keras.layers.Dense(l.size, activation=l.activation))
 		self.model = tf.keras.Sequential(temp)
 
 	def calc_fitness(self) -> None:
@@ -114,24 +123,24 @@ class Network():
 		elif mutation == 2: #loss
 			self.repr["loss"] = random.choice(LOSS)
 		elif mutation == 3: #initial layer
-			self.repr["layers"][0][1] = random.choice(ACTIVATIONS)
+			self.repr["layers"][0].activation = random.choice(ACTIVATIONS)
 		elif mutation == 4: #final layer
 			#need to look more into layers
 			...
-			#self.repr["layers"][-1][1] = random.choice(ACTIVATIONS)
+			#self.repr["layers"][-1].activation = random.choice(ACTIVATIONS)
 		else: #other layers
 			if random.choice([True, False]):
 				#find std of uniform distro of neurons up to max neuron
 				temp = list(range(1, MAX_NEURONS+1))
 				std = np.std(temp)
-				self.repr["layers"][mutation - 4][0] += round(np.random.normal(0,std/4,1)[0]) #std/4 found through trial and error
+				self.repr["layers"][mutation - 4].size += round(np.random.normal(0,std/4,1)[0]) #std/4 found through trial and error
 				#edge cases
-				if self.repr["layers"][mutation - 4][0] > MAX_NEURONS:
-					self.repr["layers"][mutation - 4][0] = MAX_NEURONS
-				elif self.repr["layers"][mutation - 4][0] < 1:
-					self.repr["layers"][mutation - 4][0] = 1
+				if self.repr["layers"][mutation - 4].size > MAX_NEURONS:
+					self.repr["layers"][mutation - 4].size = MAX_NEURONS
+				elif self.repr["layers"][mutation - 4].size < 1:
+					self.repr["layers"][mutation - 4].size = 1
 			else:
-				self.repr["layers"][mutation - 4][1] = random.choice(ACTIVATIONS)
+				self.repr["layers"][mutation - 4].activation = random.choice(ACTIVATIONS)
 		
 		return self
 
@@ -164,8 +173,9 @@ class Network():
 			#layer choice
 			indv2_mutation = random.randint(0, len(indv2.repr["layers"]) - 1)
 			#print(mutation)
-			self.repr[gene][mutation - 4][1] = random.choice([self.repr[gene][mutation - 4][1], 
-				indv2.repr[gene][indv2_mutation][1]])
+			self.repr[gene][mutation - 4].activation =\
+                    random.choice([self.repr[gene][mutation - 4].activation, 
+                    indv2.repr[gene][indv2_mutation].activation])
 		elif random.choice([True, False]):
 				self.repr[gene] = indv2.repr[gene]
 
@@ -177,8 +187,8 @@ class Network():
 		if mutation:
 			#layers choice
 			indv2_mutation = random.randint(0,len(indv2.repr["layers"]) - 1)
-			self.repr[gene][mutation - 4][0] = round((self.repr[gene][mutation - 4][0] + 
-				indv2.repr[gene][indv2_mutation][0]) / 2)
+			self.repr[gene][mutation - 4].size = round((self.repr[gene][mutation - 4].size + 
+				indv2.repr[gene][indv2_mutation].size) / 2)
 		else:
 			self.repr[gene] = (self.repr[gene] + indv2.repr[gene])/2
 			if gene == "num_layers":
@@ -186,7 +196,6 @@ class Network():
 
 	def stats(self) -> None:
 		"""Dump stats to a json file"""
-		import json
 		weights_list = self.model.get_weights()
 		#print(f"number of layers {self.repr['num_layers']}")
 		temp = True
@@ -203,13 +212,11 @@ class Network():
 				temp = True
 
 		print(biases)
-		biases = json.dumps(biases)
-		print(biases)
+		biases_json = json.dumps(biases)
+		print(biases_json)
 		#print(len(weights))
-		import itertools
 		b = list(itertools.chain.from_iterable(biases))
 		w = list(itertools.chain.from_iterable(weights))
-		weight_vals = list(itertools.chain.from_iterable(w))
 		weight_vals = {
 			"name": "weights",
 			"max": max(w),
