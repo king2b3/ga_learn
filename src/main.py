@@ -25,11 +25,13 @@ def parse_arguments(args=None) -> list:
     parser = argparse.ArgumentParser(
             description="A program to run tensorflow networks.",
             formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser.add_argument("-ng", "--number_of_generations", 
+            help="Number of generations to run, barring convergence.",
+            default=100, type=lambda gen: abs(int(gen)))
     args = parser.parse_args(args=args)
     return args
 
-def main():
-
+def main(number_of_generations:int=100):
     train = {
         "x": np.load("data-set/x_train.npy"),
         "y": np.load("data-set/y_train.npy")
@@ -39,7 +41,7 @@ def main():
         "y" : np.load("data-set/y_test.npy")
     }
     algorithm = es.ES(train, test)
-    algorithm.run()
+    algorithm.run(number_of_generations)
 
 
 if __name__ == "__main__":
