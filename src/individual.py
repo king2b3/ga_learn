@@ -4,6 +4,7 @@ Date: 2-26-2022
 Descrition: Individual for ES
 """
 ################################## Imports ###################################
+from copy import deepcopy
 from dataclasses import dataclass, asdict
 import itertools
 import json
@@ -13,7 +14,7 @@ import numpy as np
 import random
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import accuracy_score, precision_score, recall_score
-from copy import deepcopy
+from typing import Dict, Tuple
 ##############################################################################
 ################################# Constants ##################################
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'	#mute annoying message at the beginning of the TS model
@@ -194,7 +195,7 @@ class Network():
 			if gene == "num_layers":
 				self.repr[gene] = round(self.repr[gene])
 
-	def stats(self) -> None:
+	def stats(self) -> Tuple[Dict, Dict]:
 		"""Dump stats to a json file"""
 		weights_list = self.model.get_weights()
 		#print(f"number of layers {self.repr['num_layers']}")
@@ -227,7 +228,7 @@ class Network():
 			"max": max(b),
 			"min": min(b)
 		}
-		print(weight_vals, biases_vals)
+		return weight_vals, biases_vals
 
 		
 def main():
@@ -242,7 +243,7 @@ def main():
 
 	algorithm = Network(train, test)
 	algorithm.calc_fitness()
-	algorithm.stats()
+	print(algorithm.stats())
 
 if __name__ == "__main__":
 	main()
