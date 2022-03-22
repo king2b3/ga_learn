@@ -1,7 +1,7 @@
 """es.py
 Developer: Bayley King
 Date: 2-26-2022
-Descrition: Individual for ES
+Description: Individual for ES
 """
 ################################## Imports ###################################
 from copy import deepcopy

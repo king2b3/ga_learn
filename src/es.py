@@ -1,12 +1,12 @@
 """es.py
 Developer: Bayley King
 Date: 2-26-2022
-Descrition: Evolutionary Strategy framework
+Description: Evolutionary Strategy framework
 """
 ################################## Imports ###################################
-from numpy import average
-import individual as indv
 from copy import deepcopy
+import individual as indv
+from numpy import average
 import random
 ##############################################################################
 ################################# Constants ##################################
@@ -31,7 +31,8 @@ class ES():
 		"""(u+l) selection type
 		All 10 parents, 30 mutated, and 30 with crossover join the 
 		  offspring pool.
-		Deterministic elite replacement creates the new parent pool"""
+		Deterministic elite replacement creates the new parent pool
+        """
 		self.offspring = self.pop.copy()
 		#mutations
 		for i in self.pop:
@@ -51,13 +52,13 @@ class ES():
 	def sort_pop(self) -> None:
 		self.pop.sort(key=lambda x: x.fitness, reverse=True)
 
-	def stats(self, g) -> dict:
+	def stats(self, g) -> str:
 		"""Returns dictionary with stats of the population"""
 		self.sort_pop()
 		temp = f"Generation: {g} "
 		temp += f"Best performing: {self.pop[0].fitness} "
 		temp += f"Average individual: {sum(x.fitness for x in self.pop)/self.pop_size}"
-		print(temp)
+		return temp
 
 	def exit_cond(self) -> bool:
 		"""Checks to see if Accuracy, Recall, and Percision are all 1"""
@@ -69,6 +70,6 @@ class ES():
 	def run(self, gens=100) -> None:
 		for g in range(gens):
 			self.selection()
-			self.stats(g)
+			print(self.stats(g))
 			if self.exit_cond():
 				break

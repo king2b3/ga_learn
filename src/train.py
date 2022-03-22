@@ -1,7 +1,7 @@
 """train.py
 Developer: Bayley King
 Date: 2-19-2022
-Descrition: Tensorflow API
+Description: Tensorflow API
 """
 ################################## Imports ###################################
 import os
@@ -26,6 +26,7 @@ model.compile(
     loss=tf.keras.losses.poisson,
     optimizer=tf.keras.optimizers.Adam(lr=0.05)
 )
+
 def train(x_train, y_train, x_test, y_test):
     history = model.fit(x_train, y_train, epochs=50, verbose=0)
 

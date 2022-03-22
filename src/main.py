@@ -1,13 +1,12 @@
 """main.py
 Developer: Bayley King
 Date: 2-19-2022
-Descrition: Program controller
+Description: Program controller
 """
 ################################## Imports ###################################
 import argparse
 import numpy as np
 import pickle as pkl
-#import src.train as train
 import es as es
 import individual as individual
 ##############################################################################
