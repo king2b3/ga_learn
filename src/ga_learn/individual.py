@@ -194,9 +194,8 @@ class Network():
         if mutation:
             # layers choice
             indv2_mutation = random.randint(0, len(indv2.repr["layers"]) - 1)
-            self.repr[gene][mutation - 4].size = round(
-                    (self.repr[gene][mutation - 4].size
-                        + indv2.repr[gene][indv2_mutation].size) / 2)
+            _sum = self.repr[gene][mutation - 4].size + indv2.repr[gene][indv2_mutation].size
+            self.repr[gene][mutation - 4].size = round(_sum / 2)
         else:
             self.repr[gene] = (self.repr[gene] + indv2.repr[gene]) / 2
             if gene == "num_layers":
@@ -205,18 +204,17 @@ class Network():
     def stats(self) -> Tuple[Dict, Dict]:
         """Dump stats to a json file"""
         weights_list = self.model.get_weights()
-        #print(f"number of layers {self.repr['num_layers']}")
         temp = True
         weights = []
         biases = []
-        for l in range(len(weights_list)):
+        for i in range(len(weights_list)):
             if temp:
                 # weights
-                weights.append(list(weights_list[l]))
+                weights.append(list(weights_list[i]))
                 temp = False
             else:
                 # bias
-                biases.append(list(weights_list[l]))
+                biases.append(list(weights_list[i]))
                 temp = True
 
         print(biases)

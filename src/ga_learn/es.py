@@ -12,10 +12,10 @@ import random
 
 
 class ES():
-    def __init__(self, test, train, u=10, l=50) -> None:
-        # recommended 1/7 ratio for mew to lambda
-        self.pop_size = u
-        self.off_size = l
+    def __init__(self, test, train, mu=10, lambda_=50) -> None:
+        # recommended 1/7 ratio for mu to lambda
+        self.pop_size = mu
+        self.off_size = lambda_
         self.pop = []
         self.offspring = []
         self.test = test
