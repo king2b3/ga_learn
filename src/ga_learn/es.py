@@ -41,10 +41,7 @@ class ES():
                 self.offspring.append(i.crossover(random.choice(self.pop)))
         # calculate fitness of the offspring
         for x in self.offspring:
-            try:
-                x.calc_fitness()
-            except:
-                x.fitness = 0
+            x.calc_fitness()
         self.offspring.sort(key=lambda x: x.fitness, reverse=True)
         self.pop = self.offspring[:self.pop_size]
 

@@ -83,26 +83,34 @@ class Network():
 
     def build_model(self) -> None:
         temp = []
-        for l in self.repr["layers"]:
-            # print(l)
-            temp.append(tf.keras.layers.Dense(l.size, activation=l.activation))
+        for layer in self.repr["layers"]:
+            temp.append(tf.keras.layers.Dense(layer.size, activation=layer.activation))
         self.model = tf.keras.Sequential(temp)
 
     def calc_fitness(self) -> None:
         """Calculates the fitness"""
         self.build_model()
-        self.model.compile(
-            loss=self.repr["loss"],
-            optimizer=tf.keras.optimizers.Adam(lr=self.repr["lr"]),
-            metrics=[
-                tf.keras.metrics.BinaryAccuracy(name='accuracy'),
-                tf.keras.metrics.Precision(name='precision'),
-                tf.keras.metrics.Recall(name='recall')
-            ]
-        )
+        try:
+            self.model.compile(
+                loss=self.repr["loss"],
+                optimizer=tf.keras.optimizers.Adam(lr=self.repr["lr"]),
+                metrics=[
+                    tf.keras.metrics.BinaryAccuracy(name='accuracy'),
+                    tf.keras.metrics.Precision(name='precision'),
+                    tf.keras.metrics.Recall(name='recall')
+                ]
+            )
+        except ValueError:
+            self.fitness = 0
+            return
 
-        self.model.fit(self.train["x"], self.train["y"], epochs=EPOCHS,
-                       verbose=0)
+        try:
+            self.model.fit(self.train["x"], self.train["y"], epochs=EPOCHS,
+                           verbose=0)
+        except tf.errors.InvalidArgumentError:
+            self.fitness = 0
+            return
+
         predictions = self.model.predict(self.test["x"])
 
         prediction_classes = [
@@ -113,7 +121,10 @@ class Network():
         fit += accuracy_score(self.test["y"], prediction_classes)
         fit += precision_score(self.test["y"], prediction_classes, zero_division=0)
         fit += recall_score(self.test["y"], prediction_classes, zero_division=0)
-        self.fitness = fit / 3
+        if fit > 0:
+            self.fitness = fit / 3
+        else:
+            self.fitness = 0
 
     def mutate(self) -> "Network":
         """use gaussian distribution to change parameters for the network"""
