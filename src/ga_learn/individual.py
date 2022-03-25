@@ -5,14 +5,11 @@ Description: Individual for ES
 """
 ################################## Imports ###################################
 from dataclasses import dataclass
-import itertools
-import json
 import os
 import tensorflow as tf
 import numpy as np
 import random
 from sklearn.metrics import accuracy_score, precision_score, recall_score
-from typing import Dict, Tuple
 ##############################################################################
 ################################# Constants ##################################
 # mute annoying message at the beginning of the TS model
@@ -44,6 +41,7 @@ LOSS = [
 ]
 
 MAX_NEURONS = 25
+
 tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 
 
@@ -112,7 +110,6 @@ class Network():
             return
 
         predictions = self.model.predict(self.test["x"])
-
         prediction_classes = [
             1 if prob > 0.5 else 0 for prob in np.ravel(predictions)
         ]
@@ -148,8 +145,8 @@ class Network():
             if random.choice([True, False]):
                 # find std of uniform distro of neurons up to max neuron
                 temp = list(range(1, MAX_NEURONS + 1))
-                std = np.std(temp)
                 # std / 4 found through trial and error
+                std = np.std(temp)
                 self.repr["layers"][mutation - 4].size += round(np.random.normal(0, std / 4, 1)[0])
                 # edge cases
                 if self.repr["layers"][mutation - 4].size > MAX_NEURONS:
@@ -189,7 +186,6 @@ class Network():
         if mutation:
             # layer choice
             indv2_mutation = random.randint(0, len(indv2.repr["layers"]) - 1)
-            # print(mutation)
             self.repr[gene][mutation - 4].activation =\
                 random.choice(
                     [self.repr[gene][mutation - 4].activation,
@@ -212,40 +208,6 @@ class Network():
             if gene == "num_layers":
                 self.repr[gene] = round(self.repr[gene])
 
-    def stats(self) -> Tuple[Dict, Dict]:
-        """Dump stats to a json file"""
-        weights_list = self.model.get_weights()
-        temp = True
-        weights = []
-        biases = []
-        for i in range(len(weights_list)):
-            if temp:
-                # weights
-                weights.append(list(weights_list[i]))
-                temp = False
-            else:
-                # bias
-                biases.append(list(weights_list[i]))
-                temp = True
-
-        print(biases)
-        biases_json = json.dumps(biases)
-        print(biases_json)
-        # print(len(weights))
-        b = list(itertools.chain.from_iterable(biases))
-        w = list(itertools.chain.from_iterable(weights))
-        weight_vals = {
-            "name": "weights",
-            "max": max(w),
-            "min": min(w)
-        }
-        biases_vals = {
-            "names": "biases",
-            "max": max(b),
-            "min": min(b)
-        }
-        return weight_vals, biases_vals
-
 
 def main():
     train = {
@@ -260,7 +222,6 @@ def main():
 
     algorithm = Network(train, test)
     algorithm.calc_fitness()
-    print(algorithm.stats())
 
 
 if __name__ == "__main__":
