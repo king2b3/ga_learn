@@ -197,7 +197,6 @@ def main():
 
 	algorithm = Network(train, test)
 	algorithm.calc_fitness()
-	algorithm.stats()
 
 if __name__ == "__main__":
 	main()
